@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# python scraper.py <# files you want to download>
+
 # import modules
 import sys
 import urllib2
