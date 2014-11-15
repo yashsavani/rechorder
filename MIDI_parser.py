@@ -10,7 +10,6 @@ import random
 
 BEATS_PER_CHUNK = 4
 
-
 seenFeatures = []
 
 def plotBeat(data): # data = (note, velocity) list
@@ -26,20 +25,12 @@ else:
   mid = MidiFile(os.path.join('37-Tighter_Tighter_(Alive).mid'))
 
 ticks_per_beat = mid.ticks_per_beat
-tempo = 120
+tempo = 500000
 
 for i, track in enumerate(mid.tracks): # go through all tracks
   time = 0
   channels = {}
   print('Track {}: {}'.format(i, track.name))
-
-  for message in track:
-    if message.type == 'note_on': # turn a note on
-      channels[message.channel] = []
-  print channels
-
-  if len(channels) == 0:
-    continue
   
   messages = []
   beats = []
@@ -48,6 +39,9 @@ for i, track in enumerate(mid.tracks): # go through all tracks
   prevBeat = None
 
   for message in track:
+    if message.type == 'note_on' and message.channel not in channels:
+      channels[message.channel] = []
+      
     if message.type == 'set_tempo':
       print 'tempo:', message.tempo
       tempo = message.tempo
@@ -71,6 +65,8 @@ for i, track in enumerate(mid.tracks): # go through all tracks
       time += message.time * seconds_per_tick
       if message.velocity > 0:
         channels[message.channel].append((time, message.note))
+      else:
+        print 'Turning off', message.note, 'at time', time
 
   if len(messages) > 0:
     beats.append(messages)
