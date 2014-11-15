@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import util
 import chordKMeans
 import sys
 
@@ -10,7 +11,12 @@ if len(sys.argv) == 1:
 else:
   midiFileName = sys.argv[1]
 
-featureCentroids = chordKMeans.getFeatureCentroids(midiFileName)
+barLists = util.getNGramBarList(midiFileName)
+for x in barLists:
+  for y in x:
+    print y.getKMeansFeatures()
+
+#featureCentroids = chordKMeans.getFeatureCentroids(midiFileName)
 
 # part 2... hopefully we'll get here
 
