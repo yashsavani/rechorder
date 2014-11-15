@@ -120,7 +120,7 @@ for i, track in enumerate(mid.tracks): # go through all tracks
       phiAssignedToK = [phi for i, (time, chunk, phi) in enumerate(chunks) if i == k]
       if len(phiAssignedToK) == 0: # centroid died out
         centroids[k] = random.sample(possibleFeatures)
-        pass
+        continue
       averagePhi = [0] * len(phiAssignedToK[0]) # assume at least one assigned to this centroid
       for phi in phiAssignedToK:
         for j, p in enumerate(phi):
@@ -133,7 +133,10 @@ for i, track in enumerate(mid.tracks): # go through all tracks
     
   channels[-2] = []
   for i, c in enumerate(chunks):
-    channels[-2].append((c[0], assignment[i] * 100. / NUM_CLUSTERS))
+    if i > 0:
+      channels[-2].append((c[0], previousLabel))
+    previousLabel = assignment[i] * 100. / NUM_CLUSTERS
+    channels[-2].append((c[0], previousLabel))
 
     
   '''
