@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import chordKMeans
 import sys
 

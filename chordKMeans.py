@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import util
 import numpy as np
 
@@ -7,5 +8,4 @@ def getBestBarList(midiFileName):
 
 def getFeatureCentroids(midiFileName, numCentroids=12): # basically k-means
   bestBarList = getBestBarList(midiFileName)
-  pass
 

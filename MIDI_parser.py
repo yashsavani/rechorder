@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from mido import MidiFile
 from mido import MetaMessage
 import math
