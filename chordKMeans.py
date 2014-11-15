@@ -44,6 +44,5 @@ def getFeatureCentroids(midiFileName, numCentroids=12, maxIterations=100): # bas
 
 		corr_centers = list(new_corr_centers)
 
-	return corr_centers
-
+	return centroids_mat
 

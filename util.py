@@ -4,6 +4,8 @@ import mido
 import itertools
 import math
 
+np.set_printoptions(formatter={'float': lambda x: str(x)+ '\t'})
+
 NUM_FEATURES = 12
 
 # IMPORTANT: we assume the midi file has only one track!
@@ -161,15 +163,13 @@ class Bar:
   def __repr__(self):
     return str(self.beats)
 
-  ########################
-  # CHANGE THIS TO NUMPY #
-  ########################
+
   def getKMeansFeatures(self):
     v = [0] * NUM_FEATURES
     for beat in self.beats:
       for note, length in beat:
         v[note % NUM_FEATURES] += length
-    return v
+    return np.array([v])
     
   # Doesn't work yet because velocity information is lost.
   # Need to modify the "on" dict in segmentIntoBeats().
