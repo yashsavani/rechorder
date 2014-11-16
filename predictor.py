@@ -22,7 +22,7 @@ else:
 
 for i in range(2,31) :
     print "for k = %s"%i
-    num_reps = 100
+    num_reps = 1
     centers = [chordKMeans.getFeatureCentroids(midiFiles, i) for _ in range(num_reps)]
     results = [chordKMeans.evaluateKmeansClusters(midiFiles, centroids, corr_centers) \
             for (centroids, corr_centers) in centers]
