@@ -8,6 +8,8 @@ np.set_printoptions(formatter={'float': lambda x: str(x)+ '\t'})
 
 NUM_FEATURES = 12
 
+NUM_NOTES = 128
+
 # IMPORTANT: we assume the midi file has only one track!
 #   (ie, it is in format 0)
 # This must hold for us to be able to analyze the entire group of instruments
@@ -15,7 +17,7 @@ NUM_FEATURES = 12
 def getNGramBarList(midiFileName, n=4): # n = 4 for four lists
   midi = SegmentedBeatsMidiFile(midiFileName)
   assert(midi.getNumTracks() == 1)
-  return [midi.segmentIntoBars(barWidth=n, start=i) for i in range(4)]
+  return [midi.segmentIntoBars(barWidth=n, start=i) for i in range(n)]
 
 # We assume that the midi file only sets its tempo once at the start of the file
 #   (which I assume is the case >95% of the time).
@@ -81,7 +83,7 @@ class SegmentedBeatsMidiFile(mido.MidiFile):
         # add to total time being "on"
         for note in on:
           if(on[note][0]):
-            on[note] = (True, on[note][1] + message.time)
+            on[note] = (True, on[note][1] + min(self.ticks_per_beat, message.time))
 
         if message.velocity == 0: # turn the note off
           if message.note in on:
