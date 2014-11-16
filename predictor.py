@@ -20,15 +20,16 @@ for x in barLists:
   for y in x:
     print y.getKMeansFeatures()
 
+
 featureCentroids = chordKMeans.getFeatureCentroids(midiFileName, 12)
-print featureCentroids[0]
-print featureCentroids[1]
 
-for i in range(20) :
-	featureCentroids = chordKMeans.getFeatureCentroids(midiFileName, 12)
-	print "for k = %s"%i
-	print chordKMeans.evaluateKmeansClusters(midiFileName, featureCentroids[0], featureCentroids[1])
+# for i in range(1,20) :
+# 	print "for k = %s"%i
+# 	featureCentroids = chordKMeans.getFeatureCentroids(midiFileName, i)
+# 	print chordKMeans.evaluateKmeansClusters(midiFileName, featureCentroids[0], featureCentroids[1])
 
+
+featureCentroids = chordKMeans.getFeatureCentroids(midiFileName, 12)
 
 # want to, given new Midi
 def buildMarkovModel(labelSeries, k):

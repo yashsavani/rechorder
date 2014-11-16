@@ -12,9 +12,13 @@ def getBestBarList(midiFileName):
 
 # gets a list of euclidean distances between the rows of mat_a and mat_b[index]
 def euclideanDistance(mat_a, mat_b, index) :
-	diff_mat = np.subtract(mat_a, np.array([mat_b[index] for _ in range(mat_a.shape[0])]))
+	diff_mat = np.subtract(mat_a, np.array([mat_b[index] for _ in range(len(mat_a))]))
 	dists = [np.linalg.norm(vec) for vec in diff_mat]
 	return dists
+
+def getClosestCentroid(centroids_mat, data_mat, index) :
+	dists = euclideanDistance(centroids_mat, data_mat, index)
+	return np.argmin(dists)
 
 def getFeatureCentroids(midiFileName, numCentroids=12, maxIterations=100): # basically k-means
 	bestBarList = getBestBarList(midiFileName)
@@ -36,8 +40,7 @@ def getFeatureCentroids(midiFileName, numCentroids=12, maxIterations=100): # bas
 		new_corr_centers = []
 		# Find closest cluster centers for each point
 		for index in range(numExamples) :
-			dists = euclideanDistance(centroids_mat, data_mat, index)
-			center = np.argmin(dists)
+			center = getClosestCentroid(centroids_mat, data_mat, index)
 			new_corr_centers.append(center)
 			corr_points[center].append(index)
 
