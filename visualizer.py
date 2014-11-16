@@ -17,6 +17,7 @@ else:
 
 kMeans = 4
 
+
 for midiFile in midiFiles:
   barLists = util.getNGramBarList(midiFile, n=4)
   '''
