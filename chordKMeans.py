@@ -12,7 +12,7 @@ def getBestBarList(midiFileName):
 
 # gets a list of euclidean distances between the rows of mat_a and mat_b[index]
 def euclideanDistance(mat_a, mat_b, index) :
-    diff_mat = np.subtract(mat_a, np.array([mat_b[index] for _ in range(len(mat_a))]))
+    diff_mat = np.subtract(mat_a, np.tile(mat_b[index], (mat_a.shape[0], 1)))
     dists = [np.linalg.norm(vec) for vec in diff_mat]
     return dists
 
