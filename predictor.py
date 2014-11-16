@@ -24,7 +24,10 @@ featureCentroids = chordKMeans.getFeatureCentroids(midiFileName, 12)
 print featureCentroids[0]
 print featureCentroids[1]
 
-# featureCentroids = chordKMeans.getFeatureCentroids(midiFileName)
+for i in range(20) :
+	featureCentroids = chordKMeans.getFeatureCentroids(midiFileName, 12)
+	print "for k = %s"%i
+	print chordKMeans.evaluateKmeansClusters(midiFileName, featureCentroids[0], featureCentroids[1])
 
 
 # want to, given new Midi
