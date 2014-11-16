@@ -39,7 +39,7 @@ def getFeatureCentroids(midiFiles, numCentroids=12, maxIterations=100): # basica
 	corr_centers = [-1]*numExamples
 	for _ in range(maxIterations) :
 		iterations += 1
-		corr_points = [[] for _ in range(numCentroids)]
+		corr_points = [[] for placeholder in range(numCentroids)]
 		new_corr_centers = []
 		# Find closest cluster centers for each point
 		for index in range(numExamples) :
@@ -49,7 +49,7 @@ def getFeatureCentroids(midiFiles, numCentroids=12, maxIterations=100): # basica
 
 		# Move cluster center to center of corresponding points
 		for index in range(numCentroids) :
-			rel_points = data_mat[corr_points[index]]
+			rel_points = data_mat[corr_points[index]].transpose()
 			centroids_mat[index] = np.array([np.mean(pt_points) if pt_points.any() else 0 for pt_points in rel_points])
 
 		if new_corr_centers == corr_centers :
