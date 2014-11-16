@@ -169,7 +169,7 @@ class Bar:
     for beat in self.beats:
       for note, length in beat:
         v[note % NUM_FEATURES] += length
-    return np.array([v])
+    return np.array(v)
     
   # Doesn't work yet because velocity information is lost.
   # Need to modify the "on" dict in segmentIntoBeats().

@@ -4,6 +4,9 @@ import util
 import chordKMeans
 import sys
 import random
+import numpy as np
+
+np.set_printoptions(formatter={'float': lambda x: '%.2f\t'%x})
 
 # part 1
 
@@ -16,6 +19,10 @@ barLists = util.getNGramBarList(midiFileName)
 for x in barLists:
   for y in x:
     print y.getKMeansFeatures()
+
+featureCentroids = chordKMeans.getFeatureCentroids(midiFileName, 12)
+print featureCentroids[0]
+print featureCentroids[1]
 
 # featureCentroids = chordKMeans.getFeatureCentroids(midiFileName)
 
@@ -78,6 +85,7 @@ for prior, distribution in enumerate(model):
 print "----predictions----"
 for prior in range(k):
 	print "given prior", prior, "model randomly predicts", makeRandomPrediction(model, prior)
+
 
 # part 2... hopefully we'll get here
 
