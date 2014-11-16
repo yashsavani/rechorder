@@ -95,6 +95,7 @@ print "----predictions----"
 for prior in range(k):
     print "given prior", prior, "model randomly predicts", makeRandomPrediction(model, prior)
 
+
 # Running Markov model for now
 print "testing out Markov model."
 k = 12
@@ -106,10 +107,33 @@ print "------model:-------"
 for prior, distribution in enumerate(model):
     print "given", prior, "distribution is", map(prettyfloat, distribution)
 
-print "----predictions----"
-for i, prior in enumerate(labelSeries[:-1]):
-    print "given prior", prior, "model randomly predicts", makeRandomPrediction(model, prior), "whereas actual next is", labelSeries[i+1]
 
+IS_REPEAT = 0
+NOT_REPEAT = 1
+CORRECT = 1
+WRONG = 0
+
+stats = [[0,0],[0,0]]
+
+for before, after in zip(labelSeries[:-1], labelSeries[1:]):
+    prediction = makeRandomPrediction(model, before)
+    print "before:", before, "     prediction:", prediction, "   actual:", after,
+    if prediction == after:
+        print "win!"
+    else:
+        print ""
+
+    repeat = NOT_REPEAT
+    if before == after:
+        repeat = IS_REPEAT
+
+    correct = WRONG
+    if makeRandomPrediction(model, before) == after:
+        correct = CORRECT
+
+    stats[correct][repeat]+=1
+print "for repeats:", stats[CORRECT][IS_REPEAT], "correct,", stats[WRONG][IS_REPEAT], "wrong.", stats[CORRECT][IS_REPEAT] * 1.0 / (stats[CORRECT][IS_REPEAT]+stats[WRONG][IS_REPEAT]),"%"
+print "for non-repeats:", stats[CORRECT][NOT_REPEAT], "correct,", stats[WRONG][NOT_REPEAT], "wrong.", stats[CORRECT][NOT_REPEAT] * 1.0 / (stats[WRONG][NOT_REPEAT]+stats[CORRECT][NOT_REPEAT]), "%" 
 
 # part 2... hopefully we'll get here
 
