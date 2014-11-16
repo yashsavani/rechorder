@@ -15,6 +15,8 @@ if len(sys.argv) == 1:
 else:
   midiFiles = sys.argv[1:]
 
+kMeans = 4
+
 for midiFile in midiFiles:
   barLists = util.getNGramBarList(midiFile, n=4)
   '''
@@ -23,7 +25,11 @@ for midiFile in midiFiles:
       print y
   '''
 
-  featureCentroids, centroidPoints = chordKMeans.getFeatureCentroids(midiFiles)
+  featureCentroids, centroidPoints = chordKMeans.getFeatureCentroids(midiFiles, kMeans)
+
+  plt.matshow(featureCentroids);
+  plt.show();
+
 
   bestBarList = barLists[0]
   totalBars = len(bestBarList)
@@ -32,7 +38,7 @@ for midiFile in midiFiles:
   #print centroidPoints
   print "cluster sizes:"
   counts = []
-  for k in range(12):
+  for k in range(kMeans):
     count = 0
     for x in centroidPoints:
       if k==x:
@@ -92,6 +98,7 @@ for midiFile in midiFiles:
   plt.ylabel('note')
   plt.title('Clustering of musical bars vs time')
   plt.show()
+
 
   # part 2... hopefully we'll get here
 
