@@ -24,52 +24,52 @@ for x in barLists:
 featureCentroids = chordKMeans.getFeatureCentroids(midiFileName, 12)
 
 # for i in range(1,20) :
-# 	print "for k = %s"%i
-# 	featureCentroids = chordKMeans.getFeatureCentroids(midiFileName, i)
-# 	print chordKMeans.evaluateKmeansClusters(midiFileName, featureCentroids[0], featureCentroids[1])
+#     print "for k = %s"%i
+#     featureCentroids = chordKMeans.getFeatureCentroids(midiFileName, i)
+#     print chordKMeans.evaluateKmeansClusters(midiFileName, featureCentroids[0], featureCentroids[1])
 
 
 featureCentroids = chordKMeans.getFeatureCentroids(midiFileName, 12)
 
 # want to, given new Midi
 def buildMarkovModel(labelSeries, k):
-	'''
-	Assumes that label series is a sequence of integers in 0, ..., k-1.
-	also assumes that labelSeries is nonempty
-	'''
-	model = [[1 for i in range(k)] for j in range(k)]
-	for i in range(len(labelSeries) - 1):
-		before = labelSeries[i]
-		after  = labelSeries[i+1]
-		model[before][after] += 1
+    '''
+    Assumes that label series is a sequence of integers in 0, ..., k-1.
+    also assumes that labelSeries is nonempty
+    '''
+    model = [[1 for i in range(k)] for j in range(k)]
+    for i in range(len(labelSeries) - 1):
+        before = labelSeries[i]
+        after  = labelSeries[i+1]
+        model[before][after] += 1
 
-	for i in range(k):
-		n = sum(model[i])
-		for j in range(k):
-			model[i][j] *= 1.0 / n
+    for i in range(k):
+        n = sum(model[i])
+        for j in range(k):
+            model[i][j] *= 1.0 / n
 
-	return model
+    return model
 
 def makeRandomPrediction(model, before):
-	'''
-	model: a k by k list of lists of floats.
-	model[i] should sum up to 1 for all i.
+    '''
+    model: a k by k list of lists of floats.
+    model[i] should sum up to 1 for all i.
 
-	before: an integer between 0 and k-1 inclusive.
+    before: an integer between 0 and k-1 inclusive.
 
-	There are ways to make this happen in log(k) rather than k time but we won't do this now.
-	'''
-	probability_distribution = model[before]
-	# this should sum up to 1 and be nonnegative.
+    There are ways to make this happen in log(k) rather than k time but we won't do this now.
+    '''
+    probability_distribution = model[before]
+    # this should sum up to 1 and be nonnegative.
 
-	continuous_choice = random.random()
-	for i, probability in enumerate(probability_distribution):
-		if probability >= continuous_choice:
-			return i
-		else:
-			continuous_choice -= probability
-	#If you're here there's a problem
-	return "There's an error in prediction"
+    continuous_choice = random.random()
+    for i, probability in enumerate(probability_distribution):
+        if probability >= continuous_choice:
+            return i
+        else:
+            continuous_choice -= probability
+    #If you're here there's a problem
+    return "There's an error in prediction"
 
 class prettyfloat(float):
     def __repr__(self):
@@ -84,11 +84,12 @@ print "----labelSeries----"
 print labelSeries
 print "------model:-------"
 for prior, distribution in enumerate(model):
-	print "given", prior, "distribution is", map(prettyfloat, distribution)
+    print "given", prior, "distribution is", map(prettyfloat, distribution)
 
 print "----predictions----"
 for prior in range(k):
-	print "given prior", prior, "model randomly predicts", makeRandomPrediction(model, prior)
+    print "given prior", prior, "model randomly predicts", makeRandomPrediction(model, prior)
+
 
 # Running Markov model for now
 print "testing out Markov model."
@@ -99,12 +100,35 @@ print "----labelSeries----"
 print labelSeries
 print "------model:-------"
 for prior, distribution in enumerate(model):
-	print "given", prior, "distribution is", map(prettyfloat, distribution)
+    print "given", prior, "distribution is", map(prettyfloat, distribution)
 
-print "----predictions----"
-for i, prior in enumerate(labelSeries[:-1]):
-	print "given prior", prior, "model randomly predicts", makeRandomPrediction(model, prior), "whereas actual next is", labelSeries[i+1]
 
+IS_REPEAT = 0
+NOT_REPEAT = 1
+CORRECT = 1
+WRONG = 0
+
+stats = [[0,0],[0,0]]
+
+for before, after in zip(labelSeries[:-1], labelSeries[1:]):
+    prediction = makeRandomPrediction(model, before)
+    print "before:", before, "     prediction:", prediction, "   actual:", after,
+    if prediction == after:
+        print "win!"
+    else:
+        print ""
+
+    repeat = NOT_REPEAT
+    if before == after:
+        repeat = IS_REPEAT
+
+    correct = WRONG
+    if makeRandomPrediction(model, before) == after:
+        correct = CORRECT
+
+    stats[correct][repeat]+=1
+print "for repeats:", stats[CORRECT][IS_REPEAT], "correct,", stats[WRONG][IS_REPEAT], "wrong.", stats[CORRECT][IS_REPEAT] * 1.0 / (stats[CORRECT][IS_REPEAT]+stats[WRONG][IS_REPEAT]),"%"
+print "for non-repeats:", stats[CORRECT][NOT_REPEAT], "correct,", stats[WRONG][NOT_REPEAT], "wrong.", stats[CORRECT][NOT_REPEAT] * 1.0 / (stats[WRONG][NOT_REPEAT]+stats[CORRECT][NOT_REPEAT]), "%" 
 
 # part 2... hopefully we'll get here
 
