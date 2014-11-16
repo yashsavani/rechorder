@@ -16,12 +16,15 @@ def euclideanDistance(mat_a, mat_b, index) :
 	dists = [np.linalg.norm(vec) for vec in diff_mat]
 	return dists
 
+# gets the closest centroid to the vector in the data_mat
 def getClosestCentroid(centroids_mat, data_mat, index) :
 	dists = euclideanDistance(centroids_mat, data_mat, index)
 	return np.argmin(dists)
 
-def getFeatureCentroids(midiFileName, numCentroids=12, maxIterations=100): # basically k-means
-	bestBarList = getBestBarList(midiFileName)
+def getFeatureCentroids(midiFiles, numCentroids=12, maxIterations=100): # basically k-means
+	bestBarList = []
+	for midiFileName in midiFiles :
+		bestBarList += getBestBarList(midiFileName)
 	numExamples = len(bestBarList)
 
 	# parse bars into a data matrix
@@ -46,7 +49,7 @@ def getFeatureCentroids(midiFileName, numCentroids=12, maxIterations=100): # bas
 
 		# Move cluster center to center of corresponding points
 		for index in range(numCentroids) :
-			rel_points = data_mat[corr_points[index]].transpose()
+			rel_points = data_mat[corr_points[index]]
 			centroids_mat[index] = np.array([np.mean(pt_points) if pt_points.any() else 0 for pt_points in rel_points])
 
 		if new_corr_centers == corr_centers :
@@ -56,8 +59,10 @@ def getFeatureCentroids(midiFileName, numCentroids=12, maxIterations=100): # bas
 
 	return (centroids_mat, corr_centers)
 
-def evaluateKmeansClusters(midiFileName, centroids, corr_centers) :
-	bestBarList = getBestBarList(midiFileName)
+def evaluateKmeansClusters(midiFiles, centroids, corr_centers) :
+	bestBarList = []
+	for midiFileName in midiFiles :
+		bestBarList += getBestBarList(midiFileName)
 	numExamples = len(bestBarList)
 	numCentroids = centroids.shape[0]
 
