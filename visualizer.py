@@ -25,15 +25,12 @@ for midiFile in midiFiles:
   featureCentroids, centroidPoints = chordKMeans.getFeatureCentroids(midiFiles)
 
   bestBarList = barLists[0]
-  print len(bestBarList), bestBarList
   totalBars = len(bestBarList)
 
   print featureCentroids[0]
 
   colors = list('bgrcmyk')
   color = {}
-  print totalBars
-  print centroidAssignments
   for i, bar in enumerate(bestBarList):
     closestCentroid = chordKMeans.getClosestCentroid(featureCentroids, bar.getKMeansFeatures(), 0)
     if len(colors) > 0:
@@ -42,7 +39,6 @@ for midiFile in midiFiles:
     else:
       color[closestCentroid] = 'r'
 
-  print color
 
   for i, bar in enumerate(bestBarList):
     closestCentroid = chordKMeans.getClosestCentroid(featureCentroids, bar.getKMeansFeatures(), 0)
@@ -55,10 +51,6 @@ for midiFile in midiFiles:
     p = plt.fill(x, y, color[closestCentroid], alpha=0.2)
     #plt.grid(True)
 
-
-
-  for bar in bestBarList:
-    pass #print bar
 
   # plot each beat individually
   for i, bar in enumerate(bestBarList):
