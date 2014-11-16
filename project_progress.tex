@@ -82,8 +82,8 @@ To evaluate our results from the k means clustering and for feature selection, w
 
 The silhouette value for a single example is the average distance of that point from another point that was classified into the same cluster times the minimum distance between the point to the centroid of another cluster divided by the maximum of the two values. The average silhouette value gives a good estimate for how well our clustering algorithm works within our dataset.
 
-To find the optimal value of k, we ran k means 10 times on the input files using  
-different values of k and plotted the results. The graph can be found below in fig 1. As we can see we found the optimal value of k to be 10. We plan on running it again with a larger maximum on k and with more midi files in the future.
+To find the optimal value of k, we ran k means 20 times on the input files using  
+different values of k and plotted the results. The graph can be found below in fig 1. As we can see we found the optimal value of k to be 16. We plan on running it again with a larger maximum on k and with more midi files in the future.
 
 Fig 1.
 \centerline{\includegraphics[width=10cm]{best_k_song_2.png}}
@@ -91,6 +91,7 @@ Fig 1.
 Our second figure (Fig 2) shows a visualization for the midi music and the clustering. The thick red horizontal lines indicate the music notes and the colored rectangles represent the cluster that the bars are in.
 
 Fig 2.
-\centerline{\includegraphics[width=10cm]{best_k_song_2.png}}
+\centerline{\includegraphics[width=10cm]{clustering_visualization.png}}
+
 
 \end{document}

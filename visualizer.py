@@ -6,6 +6,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import pylab
+import random
 
 # part 1
 
@@ -27,28 +28,50 @@ for midiFile in midiFiles:
   bestBarList = barLists[0]
   totalBars = len(bestBarList)
 
-  print featureCentroids[0]
+  #print featureCentroids
+  #print centroidPoints
+  print "cluster sizes:"
+  counts = []
+  for k in range(12):
+    count = 0
+    for x in centroidPoints:
+      if k==x:
+        count += 1
+    counts.append(count)
+  m = max(counts)
+  for i, x in enumerate(counts):
+    print "%2d:" %(i),
+    print "-" * ((x * 40) / m) 
 
+  
   colors = list('bgrcmyk')
+  other_colors = list('bgrcmyk')
+  for x in range(100):
+    c = "#"
+    for _ in range(6):
+      c += random.choice('1234567890ABCDEF')
+    other_colors.append(c);
+
   color = {}
   for i, bar in enumerate(bestBarList):
     closestCentroid = chordKMeans.getClosestCentroid(featureCentroids, bar.getKMeansFeatures(), 0)
     if len(colors) > 0:
       if closestCentroid not in color:
-        color[closestCentroid] = colors.pop(0)
+        color[closestCentroid] = colors.pop(0) + ""
     else:
-      color[closestCentroid] = 'r'
+      color[closestCentroid] = 'w'
 
 
   for i, bar in enumerate(bestBarList):
     closestCentroid = chordKMeans.getClosestCentroid(featureCentroids, bar.getKMeansFeatures(), 0)
-    
     #x = np.linspace(0 - (i - 0.5) / float(totalBars), (i + 0.5) / float(totalBars) + 100, 2)
     x = np.array([i / float(totalBars), i / float(totalBars), (i + 1) / float(totalBars), (i + 1) / float(totalBars)])
     y = np.array([200] * 4)
     y[0] = 0
     y[3] = 0
-    p = plt.fill(x, y, color[closestCentroid], alpha=0.2)
+    closestCentroid = centroidPoints[i]
+    #print len(other_colors), centroidPoints[i], "::", other_colors[closestCentroid % len(other_colors)]
+    p = plt.fill(x, y, other_colors[closestCentroid % len(other_colors)], alpha=0.2)
     #plt.grid(True)
 
 
