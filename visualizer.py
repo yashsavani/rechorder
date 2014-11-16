@@ -88,6 +88,9 @@ for midiFile in midiFiles:
         pylab.setp(p, linewidth = duration * 5)
 
   plt.axis([0, 1, 0, util.NUM_NOTES])
+  plt.xlabel('time')
+  plt.ylabel('note')
+  plt.title('Clustering of musical bars vs time')
   plt.show()
 
   # part 2... hopefully we'll get here
