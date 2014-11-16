@@ -87,13 +87,13 @@ for midiFile in midiFiles:
   for i, bar in enumerate(bestBarList):
     for beat in bar.beats:
       for note, duration in beat:
-        x = np.linspace(i / float(totalBars), (i + 1) / float(totalBars), 2)
-        y = np.zeros(2)
-        y[0] = note
-        y[1] = note
-        p = plt.plot(x, y, 'r')
+        x = np.array([i / float(totalBars), i / float(totalBars), (i + 1) / float(totalBars), (i + 1) / float(totalBars)])
+        #x = np.linspace(i / float(totalBars), (i + 1) / float(totalBars), 4)
+        y = np.array([float(note)] * 4)
+        y[0] = y[0] - duration
+        y[3] = y[3] - duration
+        p = plt.fill(x, y, 'r')
         #print duration
-        pylab.setp(p, linewidth = duration * 5)
 
   plt.axis([0, 1, 0, util.NUM_NOTES])
   plt.xlabel('time')
