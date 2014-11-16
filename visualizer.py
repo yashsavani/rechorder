@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 import pylab
 import random
 
+BEATS_PER_BAR = 2 * 4
+PLOT_BEATS_PER_BAR = 1
+
 # part 1
 
 if len(sys.argv) == 1:
@@ -20,7 +23,7 @@ kMeans = 4
 
 
 for midiFile in midiFiles:
-  barLists = util.getNGramBarList(midiFile, n=4)
+  barLists = util.getNGramBarList(midiFile, n=BEATS_PER_BAR)
   '''
   for x in barLists:
     for y in x:
@@ -84,6 +87,9 @@ for midiFile in midiFiles:
 
 
   # plot each beat individually
+  barLists = util.getNGramBarList(midiFile, n=PLOT_BEATS_PER_BAR)
+  bestBarList = barLists[0]
+  totalBars = len(bestBarList)
   for i, bar in enumerate(bestBarList):
     for beat in bar.beats:
       for note, duration in beat:
