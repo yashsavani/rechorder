@@ -86,6 +86,21 @@ print "----predictions----"
 for prior in range(k):
 	print "given prior", prior, "model randomly predicts", makeRandomPrediction(model, prior)
 
+# Running Markov model for now
+print "testing out Markov model."
+k = 12
+labelSeries = featureCentroids[1]
+model = buildMarkovModel(labelSeries, k)
+print "----labelSeries----"
+print labelSeries
+print "------model:-------"
+for prior, distribution in enumerate(model):
+	print "given", prior, "distribution is", map(prettyfloat, distribution)
+
+print "----predictions----"
+for i, prior in enumerate(labelSeries[:-1]):
+	print "given prior", prior, "model randomly predicts", makeRandomPrediction(model, prior), "whereas actual next is", labelSeries[i+1]
+
 
 # part 2... hopefully we'll get here
 
