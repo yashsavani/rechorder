@@ -20,9 +20,9 @@ else:
 #   for y in x:
 #     print y.getKMeansFeatures()
 
-for i in range(2,31) :
+for i in range(2,21) :
     print "for k = %s"%i
-    num_reps = 1
+    num_reps = 5
     centers = [chordKMeans.getFeatureCentroids(midiFiles, i) for _ in range(num_reps)]
     results = [chordKMeans.evaluateKmeansClusters(midiFiles, centroids, corr_centers) \
             for (centroids, corr_centers) in centers]
@@ -30,7 +30,7 @@ for i in range(2,31) :
     plt.plot(i, np.mean(results), marker='o', color='b')
     plt.errorbar(i, np.mean(results), yerr=np.std(results), fmt="-", color='b')
 
-plt.axis([0,31,0,1])
+plt.axis([0,21,0,1])
 plt.xlabel("k")
 plt.ylabel("average silhouette value")
 plt.title("Best k for kmeans on music analysis")
