@@ -158,6 +158,9 @@ class Bar:
 
   def __init__(self, beats, barWidth=4):
     self.beats = beats
+    for i, beat in enumerate(self.beats):
+      for j, (note, length) in enumerate(beat):
+        self.beats[i][j] = (note, min(length, 1))
 
   def __str__(self):
     return str(self.beats)
