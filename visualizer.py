@@ -10,18 +10,18 @@ import pylab
 # part 1
 
 if len(sys.argv) == 1:
-  midiFileName = 'default.mid'
+  midiFiles = ['default.mid']
 else:
-  midiFileName = sys.argv[1]
+  midiFiles = sys.argv[1:]
 
-barLists = util.getNGramBarList(midiFileName, n=4)
+barLists = util.getNGramBarList(midiFiles, n=4)
 '''
 for x in barLists:
   for y in x:
     print y
 '''
 
-featureCentroids, centroidAssignments = chordKMeans.getFeatureCentroids(midiFileName)
+featureCentroids, centroidAssignments = chordKMeans.getFeatureCentroids(midiFiles)
 
 bestBarList = barLists[0]
 print len(bestBarList), bestBarList
