@@ -5,8 +5,8 @@ import random
 
 np.set_printoptions(formatter={'float': lambda x: '%.2f\t'%round(x,2)})
 
-def getBestBarList(midiFileName):
-    barLists = util.getNGramBarList(midiFileName)
+def getBestBarList(midiFileName, beatsPerBar):
+    barLists = util.getNGramBarList(midiFileName, n=beatsPerBar)
     return barLists[0]
     #return best bar list in barLists
 
@@ -27,10 +27,13 @@ def getClosestCentroid(centroids_mat, data_mat, index) :
     dists = euclideanDistance(centroids_mat, data_mat, index)
     return np.argmin(dists)
 
-def getFeatureCentroids(midiFiles, numCentroids=12, maxIterations=100): # basically k-means
+def getClosestCentroidFromVector(centroids_mat, vector):
+    return getClosestCentroid(centroids_mat, [vector], 0)
+
+def getFeatureCentroids(midiFiles, beatsPerBar, numCentroids=12, maxIterations=100): # basically k-means
     bestBarList = []
     for midiFileName in midiFiles :
-        bestBarList += getBestBarList(midiFileName)
+        bestBarList += getBestBarList(midiFileName, beatsPerBar=beatsPerBar)
     numExamples = len(bestBarList)
 
     # parse bars into a data matrix
