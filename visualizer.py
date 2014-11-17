@@ -12,14 +12,14 @@ import random
 BEATS_PER_BAR = 8
 PLOT_BEATS_PER_BAR = 1
 
-def plotRectangle(top, left, right, height, opt='', alpha=1):
+def plotRectangle(plot, top, left, right, height, opt='', alpha=1):
   x = np.array([left, left, right, right])
   y = np.array([float(top)] * 4)
   y[0] -= height
   y[3] -= height
-  plt.fill(x, y, opt, alpha=alpha)
+  plot.fill(x, y, opt, alpha=alpha)
 
-def plotPianoKeys(centroids, row, totalRows):
+def plotPianoKeys(plot, centroids, row, totalRows):
   n = len(centroids)
   plt.axis([0, 1, 0, 1])
   x = np.linspace(0, 1)
@@ -37,8 +37,8 @@ def plotPianoKeys(centroids, row, totalRows):
   whiteKeyPos = [0, 2, 4, 5, 7, 9, 11]
   for i in range(7):
     color = 'w' if centroids[row][whiteKeyPos[i]] == 0 else 'r'
-    plotRectangle(top, i / 7., (i + 1) / 7., height, 'w')
-    plotRectangle(top, i / 7., (i + 1) / 7., height, color, alpha=normalizeKeys[i])
+    plotRectangle(plot, top, i / 7., (i + 1) / 7., height, 'w')
+    plotRectangle(plot, top, i / 7., (i + 1) / 7., height, color, alpha=normalizeKeys[i])
 
   # black keys
   blackKeyPos = [1, 3, 6, 8, 10]
@@ -47,7 +47,7 @@ def plotPianoKeys(centroids, row, totalRows):
     l = left[i]
     p = int(round(normalizeKeys[blackKeyPos[i]] * 255.))
     color = '#%0.2x0000' % p
-    plotRectangle(top, l / 7., (l + 0.666) / 7, height * 0.6, color)
+    plotRectangle(plot, top, l / 7., (l + 0.666) / 7, height * 0.6, color)
 
 
 
@@ -58,7 +58,7 @@ if len(sys.argv) == 1:
 else:
   midiFiles = sys.argv[1:]
 
-kMeans = 8
+kMeans = 12
 
 
 
@@ -72,18 +72,19 @@ for midiFile in midiFiles:
 
   featureCentroids, centroidPoints = chordKMeans.getFeatureCentroids(midiFiles, numCentroids=kMeans, beatsPerBar=BEATS_PER_BAR)
 
-  plt.figure(figsize=(7, 2 * len(featureCentroids)))
+  #fig = plt.figure(figsize=(7, 2 * kMeans))
+  fig = plt.figure()
+  ax = fig.add_subplot(111)
+  ax.set_aspect(3.5 / 8. * kMeans)
 
   for i in range(len(featureCentroids)):
-    plotPianoKeys(featureCentroids, i, len(featureCentroids))
+    plotPianoKeys(ax, featureCentroids, i, kMeans)
   plt.show()
 
-  plt.matshow(featureCentroids);
-  plt.show();
-
+  plt.matshow(featureCentroids)
+  plt.show()
 
   bestBarList = barLists[0]
-  print [b.getKMeansFeatures() for b in bestBarList]
   totalBars = len(bestBarList)
 
   #print featureCentroids
