@@ -4,21 +4,61 @@ import util
 import chordKMeans
 import sys
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import pylab
 import random
 
-BEATS_PER_BAR = 2 * 4
+BEATS_PER_BAR = 4
 PLOT_BEATS_PER_BAR = 1
 
-# part 1
+def plotRectangle(top, left, right, height, opt='', alpha=1):
+  x = np.array([left, left, right, right])
+  y = np.array([float(top)] * 4)
+  y[0] -= height
+  y[3] -= height
+  plt.fill(x, y, opt, alpha=alpha)
+
+def plotPianoKeys(centroids, row, totalRows):
+  n = len(centroids)
+  plt.axis([0, 1, 0, 1])
+  x = np.linspace(0, 1)
+  top = (row + 1.) / totalRows
+  height = 1. / totalRows - 0.01
+
+  # normalize the keys
+  norm = np.linalg.norm(centroids[row])
+  if norm != 0:
+    normalizeKeys = np.array([c / float(norm) for c in centroids[row]])
+  else:
+    normalizeKeys = np.array(centroids[row])
+
+  # white keys
+  whiteKeyPos = [0, 2, 4, 5, 7, 9, 11]
+  for i in range(7):
+    color = 'w' if centroids[row][whiteKeyPos[i]] == 0 else 'r'
+    plotRectangle(top, i / 7., (i + 1) / 7., height, 'w')
+    plotRectangle(top, i / 7., (i + 1) / 7., height, color, alpha=normalizeKeys[i])
+
+  # black keys
+  blackKeyPos = [1, 3, 6, 8, 10]
+  left = [x + 2. / 3 for x in [0, 1, 3, 4, 5]]
+  for i in range(len(left)):
+    l = left[i]
+    p = int(round(normalizeKeys[blackKeyPos[i]] * 255.))
+    color = '#%0.2x0000' % p
+    plotRectangle(top, l / 7., (l + 0.666) / 7, height * 0.6, color)
+
+
+
+# begin visualization
 
 if len(sys.argv) == 1:
   midiFiles = ['default.mid']
 else:
   midiFiles = sys.argv[1:]
 
-kMeans = 4
+kMeans = 8
 
 
 
@@ -31,6 +71,12 @@ for midiFile in midiFiles:
   '''
 
   featureCentroids, centroidPoints = chordKMeans.getFeatureCentroids(midiFiles, kMeans)
+
+  plt.figure(figsize=(7, 2 * len(featureCentroids)))
+
+  for i in range(len(featureCentroids)):
+    plotPianoKeys(featureCentroids, i, len(featureCentroids))
+  plt.show()
 
   plt.matshow(featureCentroids);
   plt.show();
@@ -56,7 +102,8 @@ for midiFile in midiFiles:
 
   
   colors = list('bgrcmyk')
-  other_colors = list('bgrcmyk')
+  #other_colors = list('bgrcmyk')
+  other_colors = []
   for x in range(100):
     c = "#"
     for _ in range(6):
@@ -72,9 +119,11 @@ for midiFile in midiFiles:
     else:
       color[closestCentroid] = 'w'
 
+  print len(bestBarList), len(centroidPoints)
+  print centroidPoints
 
   for i, bar in enumerate(bestBarList):
-    closestCentroid = chordKMeans.getClosestCentroid(featureCentroids, bar.getKMeansFeatures(), 0)
+    #closestCentroid = chordKMeans.getClosestCentroid(featureCentroids, bar.getKMeansFeatures(), 0)
     #x = np.linspace(0 - (i - 0.5) / float(totalBars), (i + 0.5) / float(totalBars) + 100, 2)
     x = np.array([i / float(totalBars), i / float(totalBars), (i + 1) / float(totalBars), (i + 1) / float(totalBars)])
     y = np.array([200] * 4)
@@ -96,9 +145,11 @@ for midiFile in midiFiles:
         x = np.array([i / float(totalBars), i / float(totalBars), (i + 1) / float(totalBars), (i + 1) / float(totalBars)])
         #x = np.linspace(i / float(totalBars), (i + 1) / float(totalBars), 4)
         y = np.array([float(note)] * 4)
-        y[0] = y[0] - duration
-        y[3] = y[3] - duration
-        p = plt.fill(x, y, 'r')
+        y[0] = y[0] - 1
+        y[3] = y[3] - 1
+        #y[0] = y[0] - duration
+        #y[3] = y[3] - duration
+        p = plt.fill(x, y, 'r', alpha = duration ** 2)
         #print duration
 
   plt.axis([0, 1, 0, util.NUM_NOTES])
