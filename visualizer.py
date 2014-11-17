@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pylab
 import random
 
-BEATS_PER_BAR = 4
+BEATS_PER_BAR = 8
 PLOT_BEATS_PER_BAR = 1
 
 def plotRectangle(top, left, right, height, opt='', alpha=1):
@@ -70,7 +70,7 @@ for midiFile in midiFiles:
       print y
   '''
 
-  featureCentroids, centroidPoints = chordKMeans.getFeatureCentroids(midiFiles, kMeans)
+  featureCentroids, centroidPoints = chordKMeans.getFeatureCentroids(midiFiles, numCentroids=kMeans, beatsPerBar=BEATS_PER_BAR)
 
   plt.figure(figsize=(7, 2 * len(featureCentroids)))
 
@@ -83,6 +83,7 @@ for midiFile in midiFiles:
 
 
   bestBarList = barLists[0]
+  print [b.getKMeansFeatures() for b in bestBarList]
   totalBars = len(bestBarList)
 
   #print featureCentroids
@@ -112,24 +113,22 @@ for midiFile in midiFiles:
 
   color = {}
   for i, bar in enumerate(bestBarList):
-    closestCentroid = chordKMeans.getClosestCentroid(featureCentroids, bar.getKMeansFeatures(), 0)
+    closestCentroid = chordKMeans.getClosestCentroidFromVector(featureCentroids, bar.getKMeansFeatures())
     if len(colors) > 0:
       if closestCentroid not in color:
         color[closestCentroid] = colors.pop(0) + ""
     else:
       color[closestCentroid] = 'w'
 
-  print len(bestBarList), len(centroidPoints)
-  print centroidPoints
 
   for i, bar in enumerate(bestBarList):
-    #closestCentroid = chordKMeans.getClosestCentroid(featureCentroids, bar.getKMeansFeatures(), 0)
+    closestCentroid = chordKMeans.getClosestCentroidFromVector(featureCentroids, bar.getKMeansFeatures())
     #x = np.linspace(0 - (i - 0.5) / float(totalBars), (i + 0.5) / float(totalBars) + 100, 2)
     x = np.array([i / float(totalBars), i / float(totalBars), (i + 1) / float(totalBars), (i + 1) / float(totalBars)])
     y = np.array([200] * 4)
     y[0] = 0
     y[3] = 0
-    closestCentroid = centroidPoints[i]
+    #closestCentroid = centroidPoints[i]
     #print len(other_colors), centroidPoints[i], "::", other_colors[closestCentroid % len(other_colors)]
     p = plt.fill(x, y, other_colors[closestCentroid % len(other_colors)], alpha=0.2)
     #plt.grid(True)
