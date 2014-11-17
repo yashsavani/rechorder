@@ -10,10 +10,16 @@ def getBestBarList(midiFileName):
     return barLists[0]
     #return best bar list in barLists
 
-# gets a list of euclidean distances between the rows of mat_a and mat_b[index]
-def euclideanDistance(mat_a, mat_b, index) :
-    diff_mat = np.subtract(mat_a, np.tile(mat_b[index], (mat_a.shape[0], 1)))
+# gets a list of euclidean distances between the rows of mat_a and index_mat[index]
+def euclideanDistance(mat_a, index_mat, index) :
+    diff_mat = np.subtract(mat_a, np.tile(index_mat[index], (mat_a.shape[0], 1)))
     dists = [np.linalg.norm(vec) for vec in diff_mat]
+    return dists
+
+# gets a list of cosine distances between the rows of mat_a and index_mat[index]
+def cosineDistance(mat_a, index_mat, index) :
+    dot_mat = np.dot(mat_a, index_mat[index].reshape(-1,1)).transpose()
+    dists = [dot_mat[0,i] / (np.linalg.norm(mat_a[i]) * np.linalg.norm(index_mat[index])) for i in range(dot_mat.shape[1])]
     return dists
 
 # gets the closest centroid to the vector in the data_mat
