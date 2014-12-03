@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pylab
 import random
 
-BEATS_PER_BAR = 8
+BEATS_PER_BAR = 1
 PLOT_BEATS_PER_BAR = 1
 
 def plotRectangle(plot, top, left, right, height, opt='', alpha=1):
@@ -158,9 +158,63 @@ for midiFile in midiFiles:
   plt.xlabel('time')
   plt.ylabel('note')
   plt.title('Clustering of musical bars vs time')
-  plt.show()
+  #plt.show() # moved this to later
 
 
   # part 2... hopefully we'll get here
+  # idea right now is to purely examine the sequence of clusters 
+  # and search for the longest consecutive string of clusters that match the currently most recent string of clusters.
+  predictions = []
+  for i, centroid in enumerate(centroidPoints):
+    # to predict entry i, I'm only allowed to look at things i-1 or earlier.
+    value = -1
+    max_similar_sequence_length = 0
+    for j in range(i-2, -1, -1):
+      for k in range(j, -1, -1):
+        if centroidPoints[k] != centroidPoints[i - 1 + k - j]:
+          sequence_length = j - k
+          if sequence_length > max_similar_sequence_length:
+            value = centroidPoints[j + 1]
+            max_similar_sequence_length = sequence_length
+          break
+    predictions.append(value)
+
+  print centroidPoints
+  print predictions
+  n_correct = 0
+  n_wrong = 0
+  n_unknown = 0
+  for a,b in zip(centroidPoints, predictions):
+    if b == -1:
+      n_unknown +=1
+      print "?",
+    elif a == b:
+      n_correct +=1
+      print "Y",
+    else:
+      n_wrong += 1
+      print "N",
+  print ""
+  print "correct:", n_correct
+  print "wrong:", n_wrong
+  print "no guess", n_unknown
+
+  totalBars = len(bestBarList)
+  for i, centroid in enumerate(predictions):
+    if centroid == -1:
+      continue
+    #x = np.linspace(0 - (i - 0.5) / float(totalBars), (i + 0.5) / float(totalBars) + 100, 2)
+    x = np.array([i / float(totalBars), i / float(totalBars), (i + 1) / float(totalBars), (i + 1) / float(totalBars)])
+    y = np.array([10] * 4)
+    y[0] = 0
+    y[3] = 0
+    #closestCentroid = centroidPoints[i]
+    #print len(other_colors), centroidPoints[i], "::", other_colors[closestCentroid % len(other_colors)]
+    p = plt.fill(x, y, other_colors[centroid % len(other_colors)])
+    #plt.grid(True)
+
+
+  plt.show()
+
 
 
