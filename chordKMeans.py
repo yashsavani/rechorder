@@ -3,7 +3,7 @@ import util
 import numpy as np
 import random
 
-np.set_printoptions(formatter={'float': lambda x: '%.2f\t'%round(x,2)})
+#np.set_printoptions(formatter={'float': lambda x: '%.2f\t'%round(x,2)})
 
 def getBestBarList(midiFileName, beatsPerBar):
     barLists = util.getNGramBarList(midiFileName, n=beatsPerBar)
@@ -38,11 +38,15 @@ def getFeatureCentroids(midiFiles, beatsPerBar, numCentroids=12, maxIterations=1
 
     # parse bars into a data matrix
     data_mat = np.array([bar.getKMeansFeatures() for bar in bestBarList])
+    # list of 12-vectors
+    print "HELLO.", len(data_mat[0]), "should be 12."
+
 
     # initialize the k clusters from k randomly chosen points in the data
     indices = range(numExamples)
     random.shuffle(indices)
     centroids_mat = data_mat[indices[:numCentroids]]
+    print "WHAT.", len(centroids_mat[0])
 
     iterations = 0
     corr_centers = [-1]*numExamples

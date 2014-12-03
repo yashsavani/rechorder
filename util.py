@@ -4,7 +4,7 @@ import mido
 import itertools
 import math
 
-np.set_printoptions(formatter={'float': lambda x: str(x)+ '\t'})
+#np.set_printoptions(formatter={'float': lambda x: str(x)+ '\t'})
 
 NUM_FEATURES = 12
 
