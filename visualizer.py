@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pylab
 import random
 
-BEATS_PER_BAR = 1
+BEATS_PER_BAR = 8
 PLOT_BEATS_PER_BAR = 1
 
 def plotRectangle(plot, top, left, right, height, opt='', alpha=1):
@@ -204,7 +204,9 @@ for midiFile in midiFiles:
     if centroid == -1:
       continue
     #x = np.linspace(0 - (i - 0.5) / float(totalBars), (i + 0.5) / float(totalBars) + 100, 2)
-    x = np.array([i / float(totalBars), i / float(totalBars), (i + 1) / float(totalBars), (i + 1) / float(totalBars)])
+    x = np.array([i, i, (i + 1), (i + 1)])
+    x = x * (1.0 / (totalBars+BEATS_PER_BAR) )
+    x = BEATS_PER_BAR * x
     y = np.array([10] * 4)
     y[0] = 0
     y[3] = 0
