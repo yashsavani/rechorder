@@ -15,15 +15,11 @@ if len(sys.argv) == 1:
 else:
     midiFiles = sys.argv[1:]
 
-# barLists = util.getNGramBarList(midiFileName)
-# for x in barLists:
-#   for y in x:
-#     print y.getKMeansFeatures()
 
-for i in range(2,11) :
+for i in range(2,12) :
     print "for k = %s"%i
     num_reps = 5
-    centers = [chordKMeans.getFeatureCentroids(midiFiles, i) for _ in range(num_reps)]
+    centers = [chordKMeans.getFeatureCentroids(midiFiles, numCentroids=i) for _ in range(num_reps)]
     results = [chordKMeans.evaluateKmeansClusters(midiFiles, centroids, corr_centers) \
             for (centroids, corr_centers) in centers]
 

@@ -30,7 +30,7 @@ def getClosestCentroid(centroids_mat, data_mat, index) :
 def getClosestCentroidFromVector(centroids_mat, vector):
     return getClosestCentroid(centroids_mat, [vector], 0)
 
-def getFeatureCentroids(midiFiles, beatsPerBar, numCentroids=12, maxIterations=100): # basically k-means
+def getFeatureCentroids(midiFiles, beatsPerBar=4, numCentroids=12, maxIterations=100): # basically k-means
     bestBarList = []
     for midiFileName in midiFiles :
         bestBarList += getBestBarList(midiFileName, beatsPerBar=beatsPerBar)
@@ -38,15 +38,12 @@ def getFeatureCentroids(midiFiles, beatsPerBar, numCentroids=12, maxIterations=1
 
     # parse bars into a data matrix
     data_mat = np.array([bar.getKMeansFeatures() for bar in bestBarList])
-    # list of 12-vectors
-    print "HELLO.", len(data_mat[0]), "should be 12."
 
 
     # initialize the k clusters from k randomly chosen points in the data
     indices = range(numExamples)
     random.shuffle(indices)
     centroids_mat = data_mat[indices[:numCentroids]]
-    print "WHAT.", len(centroids_mat[0])
 
     iterations = 0
     corr_centers = [-1]*numExamples
