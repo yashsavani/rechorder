@@ -3,4 +3,5 @@ samples
 *.mid
 *.pyc
 *.swp
+*.mtf
 Thumbs.db
