@@ -5,7 +5,7 @@ import random
 
 np.set_printoptions(formatter={'float': lambda x: '%.2f\t'%round(x,2)})
 
-def getBestBarList(midiFileName, beatsPerBar):
+def getBestBarList(midiFileName, beatsPerBar=4):
     barLists = util.getNGramBarList(midiFileName, n=beatsPerBar)
     return barLists[0]
     #return best bar list in barLists
