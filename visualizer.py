@@ -173,7 +173,7 @@ for midiFile in midiFiles:
       for k in range(j, -1, -1):
         if centroidPoints[k] != centroidPoints[i - 1 + k - j]:
           sequence_length = j - k
-          if sequence_length > max_similar_sequence_length:
+          if sequence_length >= max_similar_sequence_length:
             value = centroidPoints[j + 1]
             max_similar_sequence_length = sequence_length
           break
