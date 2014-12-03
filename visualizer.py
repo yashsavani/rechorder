@@ -79,6 +79,8 @@ for midiFile in midiFiles:
 
   for i in range(len(featureCentroids)):
     plotPianoKeys(ax, featureCentroids, i, kMeans)
+  plt.gca().axes.get_xaxis().set_visible(False)
+  plt.gca().axes.get_yaxis().set_visible(False)
   plt.show()
 
   plt.matshow(featureCentroids)
