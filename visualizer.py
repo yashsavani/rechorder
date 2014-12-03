@@ -169,11 +169,11 @@ for midiFile in midiFiles:
     # to predict entry i, I'm only allowed to look at things i-1 or earlier.
     value = -1
     max_similar_sequence_length = 0
-    for j in range(i-2, -1, -1):
+    for j in range(0, i-1):
       for k in range(j, -1, -1):
         if centroidPoints[k] != centroidPoints[i - 1 + k - j]:
           sequence_length = j - k
-          if sequence_length > max_similar_sequence_length:
+          if sequence_length >= max_similar_sequence_length:
             value = centroidPoints[j + 1]
             max_similar_sequence_length = sequence_length
           break
@@ -208,10 +208,12 @@ for midiFile in midiFiles:
     y = np.array([10] * 4)
     y[0] = 0
     y[3] = 0
+    if centroid == centroidPoints[i]:
+      y[1] = 15
+      y[2] = 15
     #closestCentroid = centroidPoints[i]
     #print len(other_colors), centroidPoints[i], "::", other_colors[closestCentroid % len(other_colors)]
     p = plt.fill(x, y, other_colors[centroid % len(other_colors)])
-    #plt.grid(True)
 
 
   plt.show()
