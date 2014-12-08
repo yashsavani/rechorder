@@ -2,6 +2,7 @@
 import util
 import numpy as np
 import random
+import sys
 
 #np.set_printoptions(formatter={'float': lambda x: '%.2f\t'%round(x,2)})
 
@@ -39,18 +40,23 @@ def getFeatureCentroids(midiFiles, beatsPerBar, numCentroids=12, maxIterations=1
     # parse bars into a data matrix
     data_mat = np.array([bar.getKMeansFeatures() for bar in bestBarList])
     # list of 12-vectors
-    print "HELLO.", len(data_mat[0]), "should be 12."
 
-
+    print 'Running k-Means.'
     # initialize the k clusters from k randomly chosen points in the data
     indices = range(numExamples)
     random.shuffle(indices)
     centroids_mat = data_mat[indices[:numCentroids]]
-    print "WHAT.", len(centroids_mat[0])
 
     iterations = 0
     corr_centers = [-1]*numExamples
+    n_dashes = 0
+    print "progress:",
     for _ in range(maxIterations) :
+        if _ * 40 / maxIterations > n_dashes:
+            for i in range(((_ * 40) / maxIterations) - n_dashes):
+                sys.stdout.write('-')
+                sys.stdout.flush()
+                n_dashes += 1
         iterations += 1
         corr_points = [[] for placeholder in range(numCentroids)]
         new_corr_centers = []
@@ -69,7 +75,7 @@ def getFeatureCentroids(midiFiles, beatsPerBar, numCentroids=12, maxIterations=1
             break
 
         corr_centers = list(new_corr_centers)
-
+    print ""
     return (centroids_mat, corr_centers)
 
 def evaluateKmeansClusters(midiFiles, centroids, corr_centers) :

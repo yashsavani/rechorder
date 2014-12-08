@@ -22,9 +22,9 @@ kMeans = 12
 BEATS_PER_BAR = 1
 
 
-def generate_training_set(n_previous_bars, k_means, beats_per_bar, midiFiles):
-  centroidVectors, all_classifications = chordKMeans.getFeatureCentroids(midiFiles, numCentroids=kMeans, beatsPerBar=BEATS_PER_BAR)
-  
+def generate_training_set(n_previous_bars, k_means, beats_per_bar, midiFiles, centroidVectors):
+  #centroidVectors, all_classifications = chordKMeans.getFeatureCentroids(midiFiles, numCentroids=kMeans, beatsPerBar=BEATS_PER_BAR)
+  #centroidVectors = motif.readCentroids(cluster_centroids_file)
 
   classification_sequences = []
   for midiFile in midiFiles:
@@ -66,8 +66,8 @@ if len(sys.argv) < 2:
   print "Please give me some MIDI files."
 else:
   midiFiles = sys.argv[1:]
-
-  xy = generate_training_set(N_PREVIOUS_BARS, kMeans, BEATS_PER_BAR, midiFiles)
+  centroidVectors, all_classifications = chordKMeans.getFeatureCentroids(midiFiles, numCentroids=kMeans, beatsPerBar=BEATS_PER_BAR)
+  xy = generate_training_set(N_PREVIOUS_BARS, kMeans, BEATS_PER_BAR, midiFiles, centroidVectors)
   decision_function = get_decision_function(xy)
 
   predicted_y = decision_function(xy[0])
@@ -81,5 +81,9 @@ else:
       n_correct+=1
     else:
       n_wrong+=1
-  print 'n correct:', n_correct, 'n_wrong:', n_wrong, 'n_total:', len(xy[0])
+
+  print '-----------Results of testing on training set-----------'
+  print 'n_correct :', n_correct
+  print 'n_wrong   :', n_wrong
+  print 'n_total   :', len(xy[0])
 

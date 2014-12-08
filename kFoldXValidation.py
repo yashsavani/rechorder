@@ -9,36 +9,55 @@ import matplotlib.pyplot as plt
 import pylab
 import random
 import motif
+from makeTrainingSet import get_decision_function, generate_training_set
 
-BEATS_PER_BAR = 8
+BEATS_PER_BAR = 1
 PLOT_BEATS_PER_BAR = 1
+N_PREVIOUS_BARS = 5
 
-# begin visualization
 
-if len(sys.argv) == 1:
-  midiFiles = ['default.mid']
-else:
-  midiFiles = sys.argv[1:]
-
-beatsPerBarDefault = 8
 kMeansDefault = 12
 
 #print centroids
 
 def generateKFoldFiles():
+  random.shuffle(midiFiles);
   run = len(midiFiles) // 10 # off by one? don't care atm
   for i in range(10):
     train = midiFiles[:i * run] + midiFiles[(i + 1) * run:]
     test = midiFiles[i * run : (i + 1) * run]
     yield (train, test)
 
-def getKFoldConfusionMatrices():
-  for trainMidiFiles, testMidiFiles in generateKFoldFiles():
+def crossValidate():
+  for index, (trainMidiFiles, testMidiFiles) in enumerate(generateKFoldFiles()):
     centroidsFile = motif.generateAndWriteCentroids(midiFiles=trainMidiFiles, \
-        numCentroids = kMeansDefault, beatsPerBar = beatsPerBarDefault)
+        numCentroids = kMeansDefault, beatsPerBar = BEATS_PER_BAR)
     centroids = motif.readCentroids(centroidsFile)
+    
     # train svm on trainMidiFiles
+    xy_train = generate_training_set(n_previous_bars = N_PREVIOUS_BARS, k_means = kMeansDefault, beats_per_bar = BEATS_PER_BAR, midiFiles = trainMidiFiles, centroidVectors = centroids)
+    decision_function = get_decision_function(xy_train)
 
     # test svm using testMidiFiles
+    xy_test = generate_training_set(n_previous_bars = N_PREVIOUS_BARS, k_means = kMeansDefault, beats_per_bar = BEATS_PER_BAR, midiFiles = testMidiFiles, centroidVectors = centroids)
+    
+    predicted_y = decision_function(xy_test[0])
+    actual_y = xy_test[1]
 
+    n_correct = 0
+    n_wrong = 0
+    for probabilities, i in zip(predicted_y, xy_test[1]):
+      if probabilities[i] == max(probabilities):
+        n_correct+=1
+      else:
+        n_wrong+=1
+    print '----------- Results of testing on hold-out set', index, '-----------'
+    print 'n_correct :', n_correct
+    print 'n_wrong   :', n_wrong
+    print 'n_total   :', len(xy_test[0])
 
+if len(sys.argv) == 1:
+  midiFiles = ['default.mid']
+else:
+  midiFiles = sys.argv[1:]
+  crossValidate()
