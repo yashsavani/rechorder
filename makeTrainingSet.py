@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import pylab
 import random
 from sklearn import svm
+from operator import itemgetter
 
 '''This file generates a training set to be used in our SVM,
  consisting of a list of previous-n -> current cluster pairings.
@@ -56,34 +57,42 @@ def generate_training_set(n_previous_bars, k_means, beats_per_bar, midiFiles, ce
   xy = zip(*output)
   return xy
 
+def argmax(l):
+  index, value = max(enumerate(l), key = itemgetter(1))
+  return index
+
 def get_decision_function(xy):
 
   lin_clf = svm.LinearSVC()
   lin_clf.fit(xy[0], xy[1])
-  return lin_clf.decision_function
+  def decision(featureTable):
+    return [argmax(confidence) for confidence in lin_clf.decision_function(featureTable)]
 
-if len(sys.argv) < 2:
-  print "Please give me some MIDI files."
-else:
-  midiFiles = sys.argv[1:]
-  centroidVectors, all_classifications = chordKMeans.getFeatureCentroids(midiFiles, numCentroids=kMeans, beatsPerBar=BEATS_PER_BAR)
-  xy = generate_training_set(N_PREVIOUS_BARS, kMeans, BEATS_PER_BAR, midiFiles, centroidVectors)
-  decision_function = get_decision_function(xy)
+  return decision
 
-  predicted_y = decision_function(xy[0])
-  n_correct = 0
-  n_wrong = 0
+if __name__ == "__main__":
+  if len(sys.argv) < 2:
+    print "Please give me some MIDI files."
+  else:
+    midiFiles = sys.argv[1:]
+    centroidVectors, all_classifications = chordKMeans.getFeatureCentroids(midiFiles, numCentroids=kMeans, beatsPerBar=BEATS_PER_BAR)
+    xy = generate_training_set(N_PREVIOUS_BARS, kMeans, BEATS_PER_BAR, midiFiles, centroidVectors)
+    decision_function = get_decision_function(xy)
 
-  #print predicted_y
-  #print xy[1]
-  for probabilities, i in zip(predicted_y, xy[1]):
-    if probabilities[i] == max(probabilities):
-      n_correct+=1
-    else:
-      n_wrong+=1
+    predicted_y = decision_function(xy[0])
+    n_correct = 0
+    n_wrong = 0
 
-  print '-----------Results of testing on training set-----------'
-  print 'n_correct :', n_correct
-  print 'n_wrong   :', n_wrong
-  print 'n_total   :', len(xy[0])
+    #print predicted_y
+    #print xy[1]
+    for prediction, actual in zip(predicted_y, xy[1]):
+        if prediction == actual:
+          n_correct+=1
+        else:
+          n_wrong+=1
+
+    print '-----------Results of testing on training set-----------'
+    print 'n_correct :', n_correct
+    print 'n_wrong   :', n_wrong
+    print 'n_total   :', len(xy[0])
 

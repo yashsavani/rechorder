@@ -10,6 +10,7 @@ import pylab
 import random
 import motif
 from makeTrainingSet import get_decision_function, generate_training_set
+import visualizer
 
 BEATS_PER_BAR = 1
 PLOT_BEATS_PER_BAR = 1
@@ -40,15 +41,18 @@ def crossValidate():
     decision_function = get_decision_function(xy_train)
 
     # test svm using testMidiFiles
-    xy_test = generate_training_set(n_previous_bars = N_PREVIOUS_BARS, k_means = kMeansDefault, beats_per_bar = BEATS_PER_BAR, midiFiles = testMidiFiles, centroidVectors = centroids)
+    xy_test = generate_training_set(n_previous_bars = N_PREVIOUS_BARS, k_means = kMeansDefault, beats_per_bar = BEATS_PER_BAR, midiFiles = testMidiFiles[0:1], centroidVectors = centroids)
     
+    '''NOTE: NOT EXACTLY 10 FOLD VALIDATION BECAUSE WE ARE ONLY USING THE FIRST SONG'''
+
+
     predicted_y = decision_function(xy_test[0])
     actual_y = xy_test[1]
 
     n_correct = 0
     n_wrong = 0
-    for probabilities, i in zip(predicted_y, xy_test[1]):
-      if probabilities[i] == max(probabilities):
+    for prediction, actual in zip(predicted_y, xy_test[1]):
+      if prediction == actual:
         n_correct+=1
       else:
         n_wrong+=1
@@ -57,6 +61,7 @@ def crossValidate():
     print 'n_wrong   :', n_wrong
     print 'n_total   :', len(xy_test[0])
     print 'percent correct :', int((n_correct * 100 ) / len(xy_test[0])), '%'
+    visualizer.visualize(testMidiFiles[0], predicted_y, actual_y)
     accuracy.append((n_correct * 100.0 ) / len(xy_test[0]))
   print "overall accuracy sequence:", accuracy
 
