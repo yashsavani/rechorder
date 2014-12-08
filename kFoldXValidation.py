@@ -29,6 +29,7 @@ def generateKFoldFiles():
     yield (train, test)
 
 def crossValidate():
+  accuracy = []
   for index, (trainMidiFiles, testMidiFiles) in enumerate(generateKFoldFiles()):
     centroidsFile = motif.generateAndWriteCentroids(midiFiles=trainMidiFiles, \
         numCentroids = kMeansDefault, beatsPerBar = BEATS_PER_BAR)
@@ -55,6 +56,9 @@ def crossValidate():
     print 'n_correct :', n_correct
     print 'n_wrong   :', n_wrong
     print 'n_total   :', len(xy_test[0])
+    print 'percent correct :', int((n_correct * 100 ) / len(xy_test[0])), '%'
+    accuracy.append((n_correct * 100.0 ) / len(xy_test[0]))
+  print "overall accuracy sequence:", accuracy
 
 if len(sys.argv) == 1:
   midiFiles = ['default.mid']
