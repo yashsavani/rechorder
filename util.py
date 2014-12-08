@@ -23,7 +23,7 @@ def getNGramBarList(midiFileName, n=4): # n = 4 for four lists
   else:
     print "Parsing..."
     segmentedBeatsMidiFileCache[midiFileName] = SegmentedBeatsMidiFile(midiFileName)
-    midi = SegmentedBeatsMidiFile[midiFileName]
+    midi = segmentedBeatsMidiFileCache[midiFileName]
   assert(midi.getNumTracks() == 1)
   return [midi.segmentIntoBars(barWidth=n, start=i) for i in range(n)]
 
