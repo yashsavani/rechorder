@@ -18,10 +18,8 @@ segmentedBeatsMidiFileCache = {}
 #   at once. Things get a little more complicated if it has more than one track.
 def getNGramBarList(midiFileName, n=4): # n = 4 for four lists
   if midiFileName in segmentedBeatsMidiFileCache:
-    print 'Using cached segmented file'
     midi = segmentedBeatsMidiFileCache[midiFileName]
   else:
-    print "Parsing..."
     segmentedBeatsMidiFileCache[midiFileName] = SegmentedBeatsMidiFile(midiFileName)
     midi = segmentedBeatsMidiFileCache[midiFileName]
   assert(midi.getNumTracks() == 1)
@@ -81,11 +79,8 @@ class SegmentedBeatsMidiFile(mido.MidiFile):
     result = []
 
     # for each beat, do:
-    print "Segmenting into beats."
     for i in xrange(self.getTotalBeats()):
-      if i % 10 == 0:
-        sys.stdout.write('-')
-        sys.stdout.flush()
+
       # advance to next beat
       tickLimit += self.ticks_per_beat
       # iterate through all messages that can fit into these ticks
@@ -133,7 +128,6 @@ class SegmentedBeatsMidiFile(mido.MidiFile):
           toRemove.append(note)
       for note in toRemove:
         del on[note]
-    print ""
     self.beats = result
 
   def getTotalBeats(self):
