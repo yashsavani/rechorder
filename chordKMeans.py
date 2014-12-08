@@ -31,7 +31,7 @@ def getClosestCentroid(centroids_mat, data_mat, index) :
 def getClosestCentroidFromVector(centroids_mat, vector):
     return getClosestCentroid(centroids_mat, [vector], 0)
 
-def getFeatureCentroids(midiFiles, beatsPerBar, numCentroids=12, maxIterations=100): # basically k-means
+def getFeatureCentroids(midiFiles, beatsPerBar, numCentroids=12, maxIterations=1): # basically k-means
     bestBarList = []
     for midiFileName in midiFiles :
         bestBarList += getBestBarList(midiFileName, beatsPerBar=beatsPerBar)
