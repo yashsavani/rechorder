@@ -66,6 +66,7 @@ if len(sys.argv) < 2:
   print "Please give me some MIDI files."
 else:
   midiFiles = sys.argv[1:]
+
   xy = generate_training_set(N_PREVIOUS_BARS, kMeans, BEATS_PER_BAR, midiFiles)
   decision_function = get_decision_function(xy)
 
@@ -80,8 +81,5 @@ else:
       n_correct+=1
     else:
       n_wrong+=1
-  print 'n correct:', n_correct, 'n_wrong:', n_wrong
-
-
-  print decision_function(xy[0][0:1]), 'length:', len(xy[0])
+  print 'n correct:', n_correct, 'n_wrong:', n_wrong, 'n_total:', len(xy[0])
 
