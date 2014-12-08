@@ -50,7 +50,6 @@ def plotPianoKeys(plot, centroids, row, totalRows):
     plotRectangle(plot, top, l / 7., (l + 0.666) / 7, height * 0.6, color)
 
 def visualize(midiFile, predictedClusters, truth):
-  totalBars = len(predictedClusters)
 
   other_colors = []
   for x in range(100):
@@ -59,6 +58,8 @@ def visualize(midiFile, predictedClusters, truth):
       c += random.choice('1234567890ABCDEF')
     other_colors.append(c);
   
+
+  totalBars = len(truth)
   for i, closestCentroid in enumerate(truth):
     #x = np.linspace(0 - (i - 0.5) / float(totalBars), (i + 0.5) / float(totalBars) + 100, 2)
     x = np.array([i / float(totalBars), i / float(totalBars), (i + 1) / float(totalBars), (i + 1) / float(totalBars)])
@@ -73,7 +74,7 @@ def visualize(midiFile, predictedClusters, truth):
   # plot each beat individually
   barLists = util.getNGramBarList(midiFile, n=PLOT_BEATS_PER_BAR)
   bestBarList = barLists[0]
-  totalBars = len(bestBarList)
+  #totalBars = len(bestBarList)
   for i, bar in enumerate(bestBarList):
     for beat in bar.beats:
       for note, duration in beat:
@@ -92,7 +93,7 @@ def visualize(midiFile, predictedClusters, truth):
   plt.ylabel('note')
   plt.title('Clustering of musical bars vs time')
   
-
+  totalBars = len(predictedClusters)
   for i, centroid in enumerate(predictedClusters):
     if centroid == -1:
       continue
@@ -122,7 +123,7 @@ if __name__ == "__main__":
   else:
     midiFiles = sys.argv[1:]
 
-  kMeans = 12
+  kMeans = 7
 
 
 

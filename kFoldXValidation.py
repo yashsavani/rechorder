@@ -14,10 +14,10 @@ import visualizer
 
 BEATS_PER_BAR = 1
 PLOT_BEATS_PER_BAR = 1
-N_PREVIOUS_BARS = 5
+N_PREVIOUS_BARS = 2
 
 
-kMeansDefault = 12
+kMeansDefault = 7
 
 #print centroids
 
@@ -46,23 +46,56 @@ def crossValidate():
     '''NOTE: NOT EXACTLY 10 FOLD VALIDATION BECAUSE WE ARE ONLY USING THE FIRST SONG'''
 
 
-    predicted_y = decision_function(xy_test[0])
     actual_y = xy_test[1]
+    accuracy.append([])
+    for approach in ["SVM", "Matching", "Repeat"]:
+      predicted_y = []
+      if approach == "SVM":
+        predicted_y = decision_function(xy_test[0])
+      elif approach == "Matching":
+        truth = actual_y
+        predictions = []
+        for i, centroid in enumerate(truth):
+          # to predict entry i, I'm only allowed to look at things i-1 or earlier.
+          value = -1
+          max_similar_sequence_length = 0
+          for j in range(0, i-1):
+            for k in range(j, -1, -1):
+              if truth[k] != truth[i - 1 + k - j]:
+                sequence_length = j - k
+                if sequence_length > max_similar_sequence_length:
+                  value = truth[j + 1]
+                  max_similar_sequence_length = sequence_length
+                break
+          predictions.append(value)
+        predicted_y = predictions
 
-    n_correct = 0
-    n_wrong = 0
-    for prediction, actual in zip(predicted_y, xy_test[1]):
-      if prediction == actual:
-        n_correct+=1
+      
+
       else:
-        n_wrong+=1
-    print '----------- Results of testing on hold-out set', index, '-----------'
-    print 'n_correct :', n_correct
-    print 'n_wrong   :', n_wrong
-    print 'n_total   :', len(xy_test[0])
-    print 'percent correct :', int((n_correct * 100 ) / len(xy_test[0])), '%'
-    visualizer.visualize(testMidiFiles[0], predicted_y, actual_y)
-    accuracy.append((n_correct * 100.0 ) / len(xy_test[0]))
+        predicted_y = [-1] + [i for i in actual_y[:-1]]
+
+      n_correct = 0
+      n_wrong = 0
+      #print sum([a == b for a,b in zip(predicted_y, actual_y)])
+      #print sum([a == b for a,b in zip(predicted_y, xy_test[1])])
+      for prediction, actual in zip(predicted_y, actual_y):
+        if prediction == actual:
+          n_correct+=1
+        else:
+          n_wrong+=1
+
+      predicted_y = [-1] * N_PREVIOUS_BARS + predicted_y
+      actual_y = [0] * N_PREVIOUS_BARS + [i for i in actual_y]
+
+
+      print '----------- Results of testing on hold-out set', index, 'with method', approach, '-----------'
+      print 'n_correct :', n_correct
+      print 'n_wrong   :', n_wrong
+      print 'n_total   :', len(xy_test[0])
+      print 'percent correct :', int((n_correct * 100 ) / len(xy_test[0])), '%'
+      visualizer.visualize(testMidiFiles[0], predicted_y, actual_y)
+      accuracy[-1].append((n_correct * 100.0 ) / len(xy_test[0]))
   print "overall accuracy sequence:", accuracy
 
 if len(sys.argv) == 1:
