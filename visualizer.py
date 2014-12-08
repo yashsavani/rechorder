@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pylab
 import random
 
-BEATS_PER_BAR = 8
+BEATS_PER_BAR = 1
 PLOT_BEATS_PER_BAR = 1
 
 def plotRectangle(plot, top, left, right, height, opt='', alpha=1):
@@ -52,6 +52,8 @@ def plotPianoKeys(plot, centroids, row, totalRows):
 
 
 # begin visualization
+
+
 
 if len(sys.argv) == 1:
   midiFiles = ['default.mid']
@@ -114,6 +116,7 @@ for midiFile in midiFiles:
       c += random.choice('1234567890ABCDEF')
     other_colors.append(c);
 
+  # create a palette.
   color = {}
   for i, bar in enumerate(bestBarList):
     closestCentroid = chordKMeans.getClosestCentroidFromVector(featureCentroids, bar.getKMeansFeatures())
@@ -123,7 +126,8 @@ for midiFile in midiFiles:
     else:
       color[closestCentroid] = 'w'
 
-
+  # This is where we draw the large vertical bars.
+  print "length of background bars:", len(bestBarList)
   for i, bar in enumerate(bestBarList):
     closestCentroid = chordKMeans.getClosestCentroidFromVector(featureCentroids, bar.getKMeansFeatures())
     #x = np.linspace(0 - (i - 0.5) / float(totalBars), (i + 0.5) / float(totalBars) + 100, 2)
@@ -164,27 +168,38 @@ for midiFile in midiFiles:
   # part 2... hopefully we'll get here
   # idea right now is to purely examine the sequence of clusters 
   # and search for the longest consecutive string of clusters that match the currently most recent string of clusters.
+  
+
+  barLists = util.getNGramBarList(midiFile, n=BEATS_PER_BAR)
+  bestBarList = barLists[0]
+  totalBars = len(bestBarList)
+  truth = []
+  for i, bar in enumerate(bestBarList):
+    closestCentroid = chordKMeans.getClosestCentroidFromVector(featureCentroids, bar.getKMeansFeatures())
+    truth.append(closestCentroid)
+
+
   predictions = []
-  for i, centroid in enumerate(centroidPoints):
+  for i, centroid in enumerate(truth):
     # to predict entry i, I'm only allowed to look at things i-1 or earlier.
     value = -1
     max_similar_sequence_length = 0
     for j in range(0, i-1):
       for k in range(j, -1, -1):
-        if centroidPoints[k] != centroidPoints[i - 1 + k - j]:
+        if truth[k] != truth[i - 1 + k - j]:
           sequence_length = j - k
-          if sequence_length >= max_similar_sequence_length:
-            value = centroidPoints[j + 1]
+          if sequence_length > max_similar_sequence_length:
+            value = truth[j + 1]
             max_similar_sequence_length = sequence_length
           break
     predictions.append(value)
 
-  print centroidPoints
+  print truth
   print predictions
   n_correct = 0
   n_wrong = 0
   n_unknown = 0
-  for a,b in zip(centroidPoints, predictions):
+  for a,b in zip(truth, predictions):
     if b == -1:
       n_unknown +=1
       print "?",
@@ -199,26 +214,28 @@ for midiFile in midiFiles:
   print "wrong:", n_wrong
   print "no guess", n_unknown
 
-  totalBars = len(bestBarList)
+  totalBars = len(predictions)
+
   for i, centroid in enumerate(predictions):
     if centroid == -1:
       continue
     #x = np.linspace(0 - (i - 0.5) / float(totalBars), (i + 0.5) / float(totalBars) + 100, 2)
     x = np.array([i, i, (i + 1), (i + 1)])
-    x = x * (1.0 / (totalBars+BEATS_PER_BAR) )
-    x = BEATS_PER_BAR * x
+    x = x / float(totalBars)
     y = np.array([10] * 4)
     y[0] = 0
     y[3] = 0
-    if centroid == centroidPoints[i]:
+    if centroid == truth[i]:
       y[1] = 15
       y[2] = 15
-    #closestCentroid = centroidPoints[i]
-    #print len(other_colors), centroidPoints[i], "::", other_colors[closestCentroid % len(other_colors)]
+    #closestCentroid = truth[i]
+    #print len(other_colors), truth[i], "::", other_colors[closestCentroid % len(other_colors)]
     p = plt.fill(x, y, other_colors[centroid % len(other_colors)])
 
 
   plt.show()
+  print "length of predictions:", len(predictions)
+
 
 
 
