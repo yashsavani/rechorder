@@ -10,13 +10,19 @@ NUM_FEATURES = 12
 
 NUM_NOTES = 128
 
+segmentedBeatsMidiFileCache = {}
+
 # IMPORTANT: we assume the midi file has only one track!
 #   (ie, it is in format 0)
 # This must hold for us to be able to analyze the entire group of instruments
 #   at once. Things get a little more complicated if it has more than one track.
 def getNGramBarList(midiFileName, n=4): # n = 4 for four lists
-  print "Parsing..."
-  midi = SegmentedBeatsMidiFile(midiFileName)
+  if midiFileName in segmentedBeatsMidiFileCache:
+    print 'Using cached segmented file'
+    midi = segmentedBeatsMidiFileCache[midiFileName]
+  else:
+    print "Parsing..."
+    midi = SegmentedBeatsMidiFile(midiFileName)
   assert(midi.getNumTracks() == 1)
   return [midi.segmentIntoBars(barWidth=n, start=i) for i in range(n)]
 
