@@ -14,10 +14,10 @@ import visualizer
 
 BEATS_PER_BAR = 1
 PLOT_BEATS_PER_BAR = 1
-N_PREVIOUS_BARS = 2
+N_PREVIOUS_BARS = 5
 
 
-kMeansDefault = 7
+kMeansDefault = 12
 
 #print centroids
 
@@ -31,17 +31,19 @@ def generateKFoldFiles():
 
 def crossValidate():
   accuracy = []
+  trainAccuracy = []
   for index, (trainMidiFiles, testMidiFiles) in enumerate(generateKFoldFiles()):
     centroidsFile = motif.generateAndWriteCentroids(midiFiles=trainMidiFiles, \
         numCentroids = kMeansDefault, beatsPerBar = BEATS_PER_BAR)
     centroids = motif.readCentroids(centroidsFile)
     
     # train svm on trainMidiFiles
+    print "TRAINING... NUMBER", index
     xy_train = generate_training_set(n_previous_bars = N_PREVIOUS_BARS, k_means = kMeansDefault, beats_per_bar = BEATS_PER_BAR, midiFiles = trainMidiFiles, centroidVectors = centroids)
-    decision_function = get_decision_function(xy_train)
+    decision_function = get_decision_function(xy_train, trainAccuracy)
 
     # test svm using testMidiFiles
-    xy_test = generate_training_set(n_previous_bars = N_PREVIOUS_BARS, k_means = kMeansDefault, beats_per_bar = BEATS_PER_BAR, midiFiles = testMidiFiles[0:1], centroidVectors = centroids)
+    xy_test = generate_training_set(n_previous_bars = N_PREVIOUS_BARS, k_means = kMeansDefault, beats_per_bar = BEATS_PER_BAR, midiFiles = testMidiFiles, centroidVectors = centroids)
     
     '''NOTE: NOT EXACTLY 10 FOLD VALIDATION BECAUSE WE ARE ONLY USING THE FIRST SONG'''
 
@@ -94,9 +96,12 @@ def crossValidate():
       print 'n_wrong   :', n_wrong
       print 'n_total   :', len(xy_test[0])
       print 'percent correct :', int((n_correct * 100 ) / len(xy_test[0])), '%'
-      visualizer.visualize(testMidiFiles[0], predicted_y, actual_y)
+      #visualizer.visualize(testMidiFiles[0], predicted_y, actual_y)
       accuracy[-1].append((n_correct * 100.0 ) / len(xy_test[0]))
   print "overall accuracy sequence:", accuracy
+  print "trainAccuracy:", trainAccuracy
+  print "A:", [sum(x) * 0.1 for x in zip(*accuracy)]
+  print "B:", sum(trainAccuracy) * 0.1
 
 if len(sys.argv) == 1:
   midiFiles = ['default.mid']

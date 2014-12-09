@@ -61,12 +61,32 @@ def argmax(l):
   index, value = max(enumerate(l), key = itemgetter(1))
   return index
 
-def get_decision_function(xy):
+def get_decision_function(xy, accuracy = None):
 
   lin_clf = svm.LinearSVC()
   lin_clf.fit(xy[0], xy[1])
   def decision(featureTable):
     return [argmax(confidence) for confidence in lin_clf.decision_function(featureTable)]
+
+  predicted_y = decision(xy[0])
+  n_correct = 0
+  n_wrong = 0
+
+  #print predicted_y
+  #print xy[1]
+  for prediction, actual in zip(predicted_y, xy[1]):
+      if prediction == actual:
+        n_correct+=1
+      else:
+        n_wrong+=1
+
+  print '****-----------Results of testing on training set-----------'
+  print 'n_correct :', n_correct
+  print 'n_wrong   :', n_wrong
+  print 'n_total   :', len(xy[0])
+  print "accuracy: ", float(n_correct) / (n_correct + n_wrong)
+  if accuracy != None:
+    accuracy.append(float(n_correct) / (n_correct + n_wrong))
 
   return decision
 
@@ -91,8 +111,9 @@ if __name__ == "__main__":
         else:
           n_wrong+=1
 
-    print '-----------Results of testing on training set-----------'
+    print '****-----------Results of testing on training set-----------'
     print 'n_correct :', n_correct
     print 'n_wrong   :', n_wrong
     print 'n_total   :', len(xy[0])
+    print "accuracy: ", float(n_correct) / (n_correct + n_wrong)
 
