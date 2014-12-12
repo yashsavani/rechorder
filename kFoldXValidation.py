@@ -32,6 +32,11 @@ def generateKFoldFiles():
 def crossValidate():
   accuracy = []
   trainAccuracy = []
+  print "kMeansDefault:", kMeansDefault
+  ConfusionMatrix = [[0 for i in range(kMeansDefault + 1)] for j in range(kMeansDefault)]
+  print ConfusionMatrix
+  # extra entry for non-prediction
+
   for index, (trainMidiFiles, testMidiFiles) in enumerate(generateKFoldFiles()):
     centroidsFile = motif.generateAndWriteCentroids(midiFiles=trainMidiFiles, \
         numCentroids = kMeansDefault, beatsPerBar = BEATS_PER_BAR)
@@ -82,6 +87,7 @@ def crossValidate():
       #print sum([a == b for a,b in zip(predicted_y, actual_y)])
       #print sum([a == b for a,b in zip(predicted_y, xy_test[1])])
       for prediction, actual in zip(predicted_y, actual_y):
+        ConfusionMatrix[actual][prediction]+=1
         if prediction == actual:
           n_correct+=1
         else:
@@ -102,6 +108,7 @@ def crossValidate():
   print "trainAccuracy:", trainAccuracy
   print "A:", [sum(x) * 0.1 for x in zip(*accuracy)]
   print "B:", sum(trainAccuracy) * 0.1
+  print "ConfusionMatrix", ConfusionMatrix
 
 if len(sys.argv) == 1:
   midiFiles = ['default.mid']
