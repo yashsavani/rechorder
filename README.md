@@ -9,7 +9,6 @@ python visualize.py samples/*
 
 You can run k-fold cross validation on a Mac with:
 
-cd rechorder
 python kFoldXValidation.py samples/*
 
 Or on a PC with the longer command, specifying each MIDI file: 
