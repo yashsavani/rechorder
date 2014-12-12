@@ -3,19 +3,25 @@ import numpy as np
 import mido
 import itertools
 import math
-
+import sys
 #np.set_printoptions(formatter={'float': lambda x: str(x)+ '\t'})
 
 NUM_FEATURES = 12
 
 NUM_NOTES = 128
 
+segmentedBeatsMidiFileCache = {}
+
 # IMPORTANT: we assume the midi file has only one track!
 #   (ie, it is in format 0)
 # This must hold for us to be able to analyze the entire group of instruments
 #   at once. Things get a little more complicated if it has more than one track.
 def getNGramBarList(midiFileName, n=4): # n = 4 for four lists
-  midi = SegmentedBeatsMidiFile(midiFileName)
+  if midiFileName in segmentedBeatsMidiFileCache:
+    midi = segmentedBeatsMidiFileCache[midiFileName]
+  else:
+    segmentedBeatsMidiFileCache[midiFileName] = SegmentedBeatsMidiFile(midiFileName)
+    midi = segmentedBeatsMidiFileCache[midiFileName]
   assert(midi.getNumTracks() == 1)
   return [midi.segmentIntoBars(barWidth=n, start=i) for i in range(n)]
 
@@ -74,6 +80,7 @@ class SegmentedBeatsMidiFile(mido.MidiFile):
 
     # for each beat, do:
     for i in xrange(self.getTotalBeats()):
+
       # advance to next beat
       tickLimit += self.ticks_per_beat
       # iterate through all messages that can fit into these ticks
@@ -121,7 +128,6 @@ class SegmentedBeatsMidiFile(mido.MidiFile):
           toRemove.append(note)
       for note in toRemove:
         del on[note]
-
     self.beats = result
 
   def getTotalBeats(self):

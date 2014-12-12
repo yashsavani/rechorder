@@ -16,7 +16,7 @@ else:
     midiFiles = sys.argv[1:]
 
 
-for i in range(2,12) :
+for i in range(4,20) :
     print "for k = %s"%i
     num_reps = 5
     centers = [chordKMeans.getFeatureCentroids(midiFiles, numCentroids=i) for _ in range(num_reps)]
