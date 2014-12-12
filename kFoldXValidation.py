@@ -104,11 +104,14 @@ def crossValidate():
       print 'percent correct :', int((n_correct * 100 ) / len(xy_test[0])), '%'
       #visualizer.visualize(testMidiFiles[0], predicted_y, actual_y)
       accuracy[-1].append((n_correct * 100.0 ) / len(xy_test[0]))
-  print "overall accuracy sequence:", accuracy
-  print "trainAccuracy:", trainAccuracy
-  print "A:", [sum(x) * 0.1 for x in zip(*accuracy)]
-  print "B:", sum(trainAccuracy) * 0.1
+  print "============================================"
+  print "overall accuracy sequence:", accuracy, "\n"
+  print "trainAccuracy:", trainAccuracy, "\n"
+  print "============================================"
+  print "SVM, Matching, Repeat percent accuracy on testing set:", [sum(x) * 0.1 for x in zip(*accuracy)]
+  print "SVM train accuracy:", sum(trainAccuracy) * 0.1
   print "ConfusionMatrix", ConfusionMatrix
+  print "============================================"
 
 if len(sys.argv) == 1:
   midiFiles = ['default.mid']
