@@ -48,11 +48,13 @@ def getKFoldConfusionMatrices(mtffile):
 accuracy = []
 trainAccuracy = []
 print "kMeansDefault:", kMeansDefault
-ConfusionMatrix = [[0 for i in range(kMeansDefault + 1)] for j in range(kMeansDefault)]
+approaches = ["SVM", "Matching", "Repeat"]
+ConfusionMatrix = [[[0 for i in range(kMeansDefault + 1)] for j in range(kMeansDefault)] for _ in approaches]
 print ConfusionMatrix
 # extra entry for non-prediction
 
 centroids = motif.readCentroids(mtffile)
+
 
 for index, (trainMidiFiles, testMidiFiles) in enumerate(generateKFoldFiles()):
   # centroidsFile = motif.generateAndWriteCentroids(midiFiles=trainMidiFiles, \
@@ -71,7 +73,7 @@ for index, (trainMidiFiles, testMidiFiles) in enumerate(generateKFoldFiles()):
 
   actual_y = xy_test[1]
   accuracy.append([])
-  for approach in ["SVM", "Matching", "Repeat"]:
+  for i_approach, approach in enumerate(approaches):
     predicted_y = []
     if approach == "SVM":
       predicted_y = decision_function(xy_test[0])
@@ -93,8 +95,6 @@ for index, (trainMidiFiles, testMidiFiles) in enumerate(generateKFoldFiles()):
         predictions.append(value)
       predicted_y = predictions
 
-    
-
     else:
       predicted_y = [-1] + [i for i in actual_y[:-1]]
 
@@ -102,8 +102,11 @@ for index, (trainMidiFiles, testMidiFiles) in enumerate(generateKFoldFiles()):
     n_wrong = 0
     #print sum([a == b for a,b in zip(predicted_y, actual_y)])
     #print sum([a == b for a,b in zip(predicted_y, xy_test[1])])
+    print actual_y
     for prediction, actual in zip(predicted_y, actual_y):
-      ConfusionMatrix[actual][prediction]+=1
+      print i_approach, actual, prediction
+      print ConfusionMatrix
+      ConfusionMatrix[i_approach][actual][prediction]+=1
       if prediction == actual:
         n_correct+=1
       else:
