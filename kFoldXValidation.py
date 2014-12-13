@@ -12,7 +12,7 @@ import motif
 from makeTrainingSet import get_decision_function, generate_training_set
 import visualizer
 
-BEATS_PER_BAR = 1
+BEATS_PER_BAR = 4
 PLOT_BEATS_PER_BAR = 1
 N_PREVIOUS_BARS = 5
 
@@ -45,6 +45,10 @@ def getKFoldConfusionMatrices(mtffile):
 
     # test supervised learning algorithm using testMidiFiles
 
+print "**************************"
+print "Running k-fold validation."
+print "**************************"
+
 accuracy = []
 trainAccuracy = []
 print "kMeansDefault:", kMeansDefault
@@ -54,7 +58,10 @@ print ConfusionMatrix
 # extra entry for non-prediction
 
 centroids = motif.readCentroids(mtffile)
-
+print "Read centroids from file", mtffile
+print "Centroids:"
+for vector in centroids:
+  print vector
 
 for index, (trainMidiFiles, testMidiFiles) in enumerate(generateKFoldFiles()):
   # centroidsFile = motif.generateAndWriteCentroids(midiFiles=trainMidiFiles, \
@@ -64,6 +71,7 @@ for index, (trainMidiFiles, testMidiFiles) in enumerate(generateKFoldFiles()):
   # train svm on trainMidiFiles
   print "TRAINING... NUMBER", index
   xy_train = generate_training_set(n_previous_bars = N_PREVIOUS_BARS, k_means = kMeansDefault, beats_per_bar = BEATS_PER_BAR, midiFiles = trainMidiFiles, centroidVectors = centroids)
+  
   decision_function = get_decision_function(xy_train, trainAccuracy)
 
   # test svm using testMidiFiles
@@ -102,10 +110,7 @@ for index, (trainMidiFiles, testMidiFiles) in enumerate(generateKFoldFiles()):
     n_wrong = 0
     #print sum([a == b for a,b in zip(predicted_y, actual_y)])
     #print sum([a == b for a,b in zip(predicted_y, xy_test[1])])
-    print actual_y
     for prediction, actual in zip(predicted_y, actual_y):
-      print i_approach, actual, prediction
-      print ConfusionMatrix
       ConfusionMatrix[i_approach][actual][prediction]+=1
       if prediction == actual:
         n_correct+=1

@@ -20,7 +20,7 @@ arguments:
 
 N_PREVIOUS_BARS = 5
 kMeans = 7
-BEATS_PER_BAR = 1
+BEATS_PER_BAR = 4
 
 
 def generate_training_set(n_previous_bars, k_means, beats_per_bar, midiFiles, centroidVectors):
